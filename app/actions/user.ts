@@ -1,6 +1,4 @@
 "use server"
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import prisma from "@/db"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -9,22 +7,6 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined in environment variables!");
-}
-
-export interface UserInfo {
-    id: string;
-    name: string;
-    email: string;
-    tasks: {
-        id: string;
-        title: string;
-        description: string;
-        dueDate: Date;
-        completed: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        userId: string;
-    }[]
 }
 
 

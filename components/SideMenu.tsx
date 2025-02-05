@@ -15,7 +15,7 @@ export const SideMenu = () => {
             if (userData && "name" in userData) {
                 setUser(userData);
             } else {
-                console.error("Failed to fetch user:", userData);
+                console.error("Failed to fetch user");
             }
         };
 

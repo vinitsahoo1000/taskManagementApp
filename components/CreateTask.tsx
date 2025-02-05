@@ -1,19 +1,59 @@
 "use client"
+import { createTask } from "@/app/actions/task";
 import { DescriptionBox } from "./common/DescriptionBox";
 import { InputBox } from "./common/InputBox";
 import { useState } from "react";
+import { TaskProps } from "./TaskCard";
 
 interface CreateTaskProps{
     closeWindow : ()=> void;
-    createTask: ()=> void;
+    addTask: (newTask: TaskProps) => void;
 }
 
 
-export const CreateTask = ({closeWindow,createTask}:CreateTaskProps) => {
-    const [dueDate, setDueDate] = useState<string>("");
+export const CreateTask = ({closeWindow,addTask}:CreateTaskProps) => {
+    const [dueDate, setDueDate] = useState<Date | null>(null);
+    const [formData, setFormData] = useState({ title: "", description: ""});
 
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDueDate(e.target.value);
+        setDueDate(new Date(e.target.value));
+    };
+
+    const handleAddTask = async () => {
+        const token = localStorage.getItem("token");
+    
+        if (!token) {
+            alert("No token found. Please log in.");
+            return;
+        }
+    
+        const data = new FormData();
+        data.append("title", formData.title);
+        data.append("description", formData.description);
+    
+        try {
+            const response = await createTask(data, token,dueDate!);
+    
+            if (response.error) {
+                alert(response.error);
+            } else {
+                alert(response.message);
+                if (response.task) {
+                    addTask(response.task);
+                } else {
+                    alert("Task creation failed.");
+                }
+                closeWindow(); 
+            }
+        } catch (error) {
+            console.error("Error creating task:", error);
+            alert("An error occurred while adding the task.");
+        }
+    };
+    
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     return (
@@ -25,8 +65,8 @@ export const CreateTask = ({closeWindow,createTask}:CreateTaskProps) => {
                 >
                     &times;
                 </button>
-                <InputBox label="Title" placeholder="Task title..." />
-                <DescriptionBox />
+                <InputBox name="title" label="Title" placeholder="Task title..." onChange={handleChange} />
+                <DescriptionBox onChange={handleChange} />
                 <div className="mb-4">
                     <label htmlFor="dueDate" className="block mb-2 text-sm font-medium text-gray-900">
                         Select Due Date
@@ -34,16 +74,13 @@ export const CreateTask = ({closeWindow,createTask}:CreateTaskProps) => {
                     <input
                         type="date"
                         id="dueDate"
-                        value={dueDate}
                         onChange={handleDateChange}
                         className="block w-full px-3 py-2 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
-
-                {/* Submit Button */}
                 <div className="flex justify-center">
                     <button
-                        onClick={() => createTask}
+                        onClick={handleAddTask}
                         className="w-full py-2 px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition duration-300"
                     >
                         Create Task

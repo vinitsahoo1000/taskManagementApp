@@ -1,12 +1,12 @@
 import { FiCheckCircle, FiClock } from "react-icons/fi";
 import {format} from "date-fns";
 
-interface TaskProps {
+export interface TaskProps {
     title: string;
     description: string;
-    dueDate: string;
+    dueDate: Date;
     completed: Boolean;
-    createdAt: string;
+    createdAt: Date;
 }
 
 
@@ -26,7 +26,7 @@ export const TaskCard = ({ title, description, dueDate, completed, createdAt }: 
                 </div>
                 <div className="flex items-center">
                     <FiClock className="mr-1" />
-                    <span>Due: {dueDate}</span>
+                    <span>Due: {formattedDueDate}</span>
                 </div>
             </div>
             <div className={`mt-4 flex justify-center items-center text-sm ${completed ? 'text-green-500' : 'text-red-500'}`}>
