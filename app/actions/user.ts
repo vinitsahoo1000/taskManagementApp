@@ -11,6 +11,23 @@ if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined in environment variables!");
 }
 
+export interface UserInfo {
+    id: string;
+    name: string;
+    email: string;
+    tasks: {
+        id: string;
+        title: string;
+        description: string;
+        dueDate: Date;
+        completed: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+    }[]
+}
+
+
 export async function signup(formData: FormData) {
     try{
         const name = formData.get("name") as string;
@@ -40,7 +57,7 @@ export async function signup(formData: FormData) {
                 password: hashedPassword
             }
         })
-        const token = jwt.sign({ userId: newUser.id, email: newUser.email }, JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: newUser.id, email: newUser.email }, JWT_SECRET);
         
         return ({message: "User signup succesful",token})
     }catch(error:any){
@@ -68,7 +85,7 @@ export async function login(formData: FormData) {
             return { error: "Invalid credentials!", status: 401 };
         }
 
-        const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET);
         
         return ({message: "User login succesful",token})
     } catch (error: any) {
@@ -76,3 +93,33 @@ export async function login(formData: FormData) {
     }
 }
 
+
+export async function userdetails(token:string){
+    try{
+
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId?: string } | null;
+
+        if (!decoded?.userId) {
+            throw new Error("Invalid token");
+        }
+        
+        const user = await prisma.user.findUnique({
+            where:{
+                id: decoded.userId
+            },
+            select:{
+                id: true,
+                name: true,
+                email: true
+            }
+        })
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        return user;
+    }catch(error:any){
+        return { error: 'Error: Error fetching user details'};
+    }
+}

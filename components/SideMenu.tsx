@@ -1,4 +1,27 @@
+"use client"
+import { userdetails } from "@/app/actions/user";
+import { useEffect, useState } from "react";
+
 export const SideMenu = () => {
+    const [user, setUser] = useState<{ name: string } | null>(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+
+            const userData = await userdetails(token);
+
+            if (userData && "name" in userData) {
+                setUser(userData);
+            } else {
+                console.error("Failed to fetch user:", userData);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
     return (
         <div>
             <aside
@@ -33,7 +56,7 @@ export const SideMenu = () => {
                 alt="User Avatar"
                 className="w-8 h-8 rounded-full"
                 />
-            <span className="ms-3">Vinit Sahoo</span>
+            <span className="ms-3">{user ? user.name : "Guest"}</span>
             </div>
         </div>
         </aside>

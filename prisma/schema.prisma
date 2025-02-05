@@ -18,14 +18,17 @@ model User {
   name      String
   email     String @unique
   password  String
+  tasks     Task[] @relation("UserTasks")
 }
 
 model Task {
-  id  String @id @default(uuid()) @map("_id")
-  title String 
+  id          String    @id @default(uuid()) @map("_id")
+  title       String 
   description String
-  dueDate DateTime
-  completed Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  dueDate     DateTime
+  completed   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String   
+  user        User      @relation(fields: [userId], references: [id], name: "UserTasks")
 }
