@@ -4,6 +4,7 @@ import { DescriptionBox } from "./common/DescriptionBox";
 import { InputBox } from "./common/InputBox";
 import { useState } from "react";
 import { TaskProps } from "./TaskCard";
+import { toast } from "react-toastify";
 
 interface CreateTaskProps{
     closeWindow : ()=> void;
@@ -23,7 +24,7 @@ export const CreateTask = ({closeWindow,addTask}:CreateTaskProps) => {
         const token = localStorage.getItem("token");
     
         if (!token) {
-            alert("No token found. Please log in.");
+            toast.error("No token found. Please log in.");
             return;
         }
     
@@ -35,19 +36,19 @@ export const CreateTask = ({closeWindow,addTask}:CreateTaskProps) => {
             const response = await createTask(data, token,dueDate!);
     
             if (response.error) {
-                alert(response.error);
+                toast.error(response.error);
             } else {
-                alert(response.message);
+                toast.success(response.message);
                 if (response.task) {
-                    addTask(response.task);
+                    addTask({ ...response.task, onClick: () => {} });
                 } else {
-                    alert("Task creation failed.");
+                    toast.info("Task creation failed.");
                 }
                 closeWindow(); 
             }
         } catch (error) {
             console.error("Error creating task:", error);
-            alert("An error occurred while adding the task.");
+            toast.error("An error occurred while adding the task.");
         }
     };
     
