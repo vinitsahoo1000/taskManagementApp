@@ -9,8 +9,19 @@ if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined in environment variables!");
 }
 
+interface DecodedToken {
+    userId?: string;
+    email?: string;
+}
 
-export async function signup(formData: FormData) {
+interface ResponseMessage {
+    message?: string;
+    error?: string;
+    token?: string;
+    status?: number;
+}
+
+export async function signup(formData: FormData):Promise<ResponseMessage>  {
     try{
         const name = formData.get("name") as string;
         const email = formData.get("email") as string;
@@ -42,13 +53,13 @@ export async function signup(formData: FormData) {
         const token = jwt.sign({ userId: newUser.id, email: newUser.email }, JWT_SECRET);
         
         return ({message: "User signup succesful",token})
-    }catch(error:any){
-        return { error: `Error: ${error.message}`, status: 500 };
+    }catch(error:unknown){
+        return { error: `Error: ${(error as Error).message}`, status: 500 };
     }
 }
 
 
-export async function login(formData: FormData) {
+export async function login(formData: FormData):Promise<ResponseMessage> {
     try {
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
@@ -70,16 +81,16 @@ export async function login(formData: FormData) {
         const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET);
         
         return ({message: "User login succesful",token})
-    } catch (error: any) {
-        return { error: `Error: ${error.message}`, status: 500 };
+    } catch (error: unknown) {
+        return { error: `Error: ${(error as Error).message}`, status: 500 };
     }
 }
 
 
-export async function userdetails(token:string){
+export async function userdetails(token:string):Promise<ResponseMessage> {
     try{
 
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId?: string } | null;
+        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
 
         if (!decoded?.userId) {
             throw new Error("Invalid token");
@@ -100,8 +111,8 @@ export async function userdetails(token:string){
             throw new Error("User not found");
         }
 
-        return user;
-    }catch(error:any){
+        return { message: "User details fetched successfully", token, ...user };
+    }catch(error:unknown){
         return { error: 'Error: Error fetching user details'};
     }
 }

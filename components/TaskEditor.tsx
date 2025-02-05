@@ -39,7 +39,7 @@ export const TaskEditor = ({task,closeWindow,updateTaskInUI}:TaskEditorProps) =>
 
     useEffect(()=>{
         getsingleTask();
-    },[])
+    },[getsingleTask])
 
     const updateTask = async()=>{
         try{

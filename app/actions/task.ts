@@ -8,11 +8,15 @@ if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined in environment variables!");
 }
 
+interface DecodedToken {
+    userId?: string;
+}
+
 export async function createTask(formData:FormData,token:string,dueDate:Date){
     try{
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId?: string } | null;
+        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
             throw new Error("Invalid token");
@@ -35,15 +39,18 @@ export async function createTask(formData:FormData,token:string,dueDate:Date){
         }
 
         return ({message: "Task created successfully!!!",task: newTask})
-    }catch(error: any){
-        return { error: `Error: ${error.message}`};
+    }catch(error: unknown){
+        if (error instanceof Error) {
+            return { error: `Error: ${error.message}` };
+        }
+        return { error: 'An unknown error occurred' };
     }
 } 
 
 
 export async function getUserTask(token:string){
     try{
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId?: string } | null;
+        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
             throw new Error("Invalid token");
@@ -63,15 +70,18 @@ export async function getUserTask(token:string){
         }
 
         return { tasks: userTasks.tasks };
-    }catch(error:any){
-        return { error: error.message || 'Error: Error fetching user tasks' };
+    }catch(error:unknown){
+        if (error instanceof Error) {
+            return { error: error.message || 'Error: Error fetching user tasks' };
+        }
+        return { error: 'An unknown error occurred' };
     }
 }
 
 
 export async function deleteTask(taskId:string,token:string){
     try{
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId?: string } | null;
+        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
             throw new Error("Invalid token");
@@ -88,15 +98,18 @@ export async function deleteTask(taskId:string,token:string){
             return ({message: "Task delete failed!!!"})
         }
         return { task: deleteTask };
-    }catch(error:any){
-        return { error: error.message || 'Error: Error deleting user tasks' };
+    }catch(error:unknown){
+        if (error instanceof Error) {
+            return { error: error.message || 'Error: Error deleting user tasks' };
+        }
+        return { error: 'An unknown error occurred' };
     }
 }
 
 
 export async function completeTask(taskId:string,token:string){
     try{
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId?: string } | null;
+        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
             throw new Error("Invalid token");
@@ -117,15 +130,18 @@ export async function completeTask(taskId:string,token:string){
         }
 
         return { message: "Task completed" };
-    }catch(error:any){
-        return { error: error.message || 'Error: Error completing task' };
+    }catch(error:unknown){
+        if (error instanceof Error) {
+            return { error: error.message || 'Error: Error completing task' };
+        }
+        return { error: 'An unknown error occurred' };
     }
 }
 
 
 export async function getTask(taskId:string,token:string){
     try{
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId?: string } | null;
+        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
             throw new Error("Invalid token");
@@ -142,8 +158,11 @@ export async function getTask(taskId:string,token:string){
             return ({message: "Task not found!!!"})
         }
         return({task: singleTask});
-    }catch(error:any){
-        return { error: error.message || 'Error: Error finding task' };
+    }catch(error:unknown){
+        if (error instanceof Error) {
+            return { error: error.message || 'Error: Error finding task' };
+        }
+        return { error: 'An unknown error occurred' };
     }
 }
 
@@ -152,7 +171,7 @@ export async function editTask(taskId:string,token:string,formData:FormData,dueD
     try{
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId?: string } | null;
+        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
             throw new Error("Invalid token");
@@ -174,7 +193,10 @@ export async function editTask(taskId:string,token:string,formData:FormData,dueD
             return({message: "Fail to update task!!"})
         }
         return({task:updateTask})
-    }catch(error:any){
-        return { error: error.message || 'Error: Error updating task' };
+    }catch(error:unknown){
+        if (error instanceof Error) {
+            return { error: error.message || 'Error: Error updating task' };
+        }
+        return { error: 'Error: Error updating task' };
     }
 }
