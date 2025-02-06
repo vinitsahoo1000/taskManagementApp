@@ -1,6 +1,5 @@
-export const runtime = "nodejs";
-
 "use server"
+
 import prisma from "@/db"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
