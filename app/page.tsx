@@ -2,7 +2,7 @@
 import { SideMenu } from "@/components/SideMenu";
 import { TaskGrid } from "@/components/TaskGrid";
 import { useState } from "react";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu } from "react-icons/fi";
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
