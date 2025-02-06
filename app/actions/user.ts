@@ -14,14 +14,8 @@ interface DecodedToken {
     email?: string;
 }
 
-interface ResponseMessage {
-    message?: string;
-    error?: string;
-    token?: string;
-    status?: number;
-}
 
-export async function signup(formData: FormData):Promise<ResponseMessage>  {
+export async function signup(formData: FormData):Promise<unknown>  {
     try{
         const name = formData.get("name") as string;
         const email = formData.get("email") as string;
@@ -59,7 +53,7 @@ export async function signup(formData: FormData):Promise<ResponseMessage>  {
 }
 
 
-export async function login(formData: FormData):Promise<ResponseMessage> {
+export async function login(formData: FormData):Promise<unknown> {
     try {
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
@@ -87,7 +81,7 @@ export async function login(formData: FormData):Promise<ResponseMessage> {
 }
 
 
-export async function userdetails(token:string):Promise<ResponseMessage> {
+export async function userdetails(token:string):Promise<unknown> {
     try{
 
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;

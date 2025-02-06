@@ -12,7 +12,7 @@ interface DecodedToken {
     userId?: string;
 }
 
-export async function createTask(formData:FormData,token:string,dueDate:Date){
+export async function createTask(formData:FormData,token:string,dueDate:Date):Promise<unknown>{
     try{
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;
@@ -48,7 +48,7 @@ export async function createTask(formData:FormData,token:string,dueDate:Date){
 } 
 
 
-export async function getUserTask(token:string){
+export async function getUserTask(token:string):Promise<unknown>{
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
@@ -79,7 +79,7 @@ export async function getUserTask(token:string){
 }
 
 
-export async function deleteTask(taskId:string,token:string){
+export async function deleteTask(taskId:string,token:string):Promise<unknown>{
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
@@ -107,7 +107,7 @@ export async function deleteTask(taskId:string,token:string){
 }
 
 
-export async function completeTask(taskId:string,token:string){
+export async function completeTask(taskId:string,token:string):Promise<unknown>{
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
@@ -139,7 +139,7 @@ export async function completeTask(taskId:string,token:string){
 }
 
 
-export async function getTask(taskId:string,token:string){
+export async function getTask(taskId:string,token:string):Promise<unknown>{
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
@@ -167,7 +167,7 @@ export async function getTask(taskId:string,token:string){
 }
 
 
-export async function editTask(taskId:string,token:string,formData:FormData,dueDate:Date) {
+export async function editTask(taskId:string,token:string,formData:FormData,dueDate:Date):Promise<unknown> {
     try{
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;
