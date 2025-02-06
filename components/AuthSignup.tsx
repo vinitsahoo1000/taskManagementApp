@@ -18,9 +18,7 @@ export const AuthSignup = () => {
         
         const response = await signup(data);
         
-        if (response?.token) {
-            localStorage.setItem("token", response.token);
-        
+        if (response.success) {
             window.location.href = '/' 
         } else {
             alert(response?.error || "Something went wrong!");

@@ -3,6 +3,7 @@
 import prisma from "@/db"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -16,6 +17,7 @@ interface DecodedToken {
 }
 
 export interface ActionResponse {
+    success?: boolean;
     token?: string;
     message?: string;
     error?: string;
@@ -60,7 +62,14 @@ export async function signup(formData: FormData):Promise<ActionResponse>  {
         })
         const token = jwt.sign({ userId: newUser.id, email: newUser.email }, JWT_SECRET);
         
-        return ({message: "User signup succesful",token})
+        (await cookies()).set("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", 
+            sameSite: "strict", 
+            path: "/",
+        });
+
+        return ({success: true,message: "User signup succesful",token})
     }catch(error:unknown){
         return { error: `Error: ${error instanceof Error ? error.message : String(error)}`, status: 500 };
     }
@@ -88,7 +97,14 @@ export async function login(formData: FormData):Promise<ActionResponse> {
 
         const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET);
         
-        return ({message: "User login succesful",token})
+        (await cookies()).set("token", token, {
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === "production", 
+            sameSite: "strict", 
+            path: "/",
+        });
+
+        return ({success: true,message: "User login succesful",token})
     } catch (error: unknown) {
         return { error: `Error: ${error instanceof Error ? error.message : String(error)}`, status: 500 };
     }
@@ -119,7 +135,7 @@ export async function userdetails(token:string):Promise<UserDetailsResponse> {
             throw new Error("User not found");
         }
 
-        return { message: "User details fetched successfully", token, ...user };
+        return { success: true,message: "User details fetched successfully", token, ...user };
     }catch(error:unknown){
         return { error: `Error: ${error instanceof Error ? error.message : String(error)}`, status: 500 };
     }

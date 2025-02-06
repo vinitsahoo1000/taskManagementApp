@@ -25,8 +25,8 @@ export interface Task {
 }
 
 interface TaskResponse extends ActionResponse {
-    task?: Task; // Use your Task model type here
-    tasks?: Task[]; // Use your Task array model type here
+    task?: Task; 
+    tasks?: Task[];
 }
 
 export async function createTask(formData:FormData,token:string,dueDate:Date):Promise<TaskResponse>{
@@ -55,7 +55,7 @@ export async function createTask(formData:FormData,token:string,dueDate:Date):Pr
             return ({message: "Error creating new task"})
         }
 
-        return ({message: "Task created successfully!!!",task: newTask})
+        return ({success: true,message: "Task created successfully!!!",task: newTask})
     }catch(error: unknown){
         if (error instanceof Error) {
             return { error: `Error: ${error.message}` };
@@ -86,7 +86,7 @@ export async function getUserTask(token:string):Promise<TaskResponse>{
             throw new Error("User tasks not found");
         }
 
-        return { tasks: userTasks.tasks };
+        return { success: true,tasks: userTasks.tasks };
     }catch(error:unknown){
         if (error instanceof Error) {
             return { error: error.message || 'Error: Error fetching user tasks' };
@@ -114,7 +114,7 @@ export async function deleteTask(taskId:string,token:string):Promise<TaskRespons
         if(!deleteTask){
             return ({message: "Task delete failed!!!"})
         }
-        return { task: deleteTask };
+        return { success: true,task: deleteTask };
     }catch(error:unknown){
         if (error instanceof Error) {
             return { error: error.message || 'Error: Error deleting user tasks' };
@@ -146,7 +146,7 @@ export async function completeTask(taskId:string,token:string):Promise<TaskRespo
             return ({message: "Task completed failed!!!"})
         }
 
-        return { message: "Task completed" };
+        return { success: true,message: "Task completed" };
     }catch(error:unknown){
         if (error instanceof Error) {
             return { error: error.message || 'Error: Error completing task' };
@@ -174,7 +174,7 @@ export async function getTask(taskId:string,token:string):Promise<TaskResponse>{
         if(!singleTask){
             return ({message: "Task not found!!!"})
         }
-        return({task: singleTask});
+        return({success: true,task: singleTask});
     }catch(error:unknown){
         if (error instanceof Error) {
             return { error: error.message || 'Error: Error finding task' };
@@ -209,7 +209,7 @@ export async function editTask(taskId:string,token:string,formData:FormData,dueD
         if(!updateTask){
             return({message: "Fail to update task!!"})
         }
-        return({task:updateTask})
+        return({success: true,task:updateTask})
     }catch(error:unknown){
         if (error instanceof Error) {
             return { error: error.message || 'Error: Error updating task' };

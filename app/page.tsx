@@ -1,8 +1,14 @@
 "use client"
 import { SideMenu } from "@/components/SideMenu";
 import { TaskGrid } from "@/components/TaskGrid";
+import { Metadata } from "next";
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
+
+export const metadata: Metadata = {
+  title: 'Task Note'
+};
+
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
