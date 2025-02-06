@@ -26,16 +26,11 @@ export default function Home() {
 
     {isMenuOpen && (
       <div className="fixed inset-0 bg-black bg-opacity-40 z-50">
-        <div className="w-3/4 bg-white h-full shadow-md p-4 relative">
-          <button
-            onClick={toggleMenu}
-            className="text-gray-600 text-2xl absolute top-4 right-4"
-          >
-            <FiX />
-          </button>
-          <SideMenu toggleMenu={toggleMenu}/>
-        </div>
+      <div className="w-1/2 bg-white h-full shadow-md p-4 relative">
+        <SideMenu toggleMenu={toggleMenu} />
       </div>
+    </div>
+    
     )}
 
     <div className="flex-1 p-4 pt-0 md:col-span-4">

@@ -1,6 +1,7 @@
 "use server"
 import prisma from "@/db"
 import jwt from "jsonwebtoken";
+import { ActionResponse } from "./user";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -12,7 +13,22 @@ interface DecodedToken {
     userId?: string;
 }
 
-export async function createTask(formData:FormData,token:string,dueDate:Date):Promise<unknown>{
+export interface Task {
+    id: string;
+    title: string;
+    description: string;
+    userId: string;
+    createdAt: Date;
+    dueDate: Date;
+    completed: boolean;
+}
+
+interface TaskResponse extends ActionResponse {
+    task?: Task; // Use your Task model type here
+    tasks?: Task[]; // Use your Task array model type here
+}
+
+export async function createTask(formData:FormData,token:string,dueDate:Date):Promise<TaskResponse>{
     try{
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;
@@ -48,7 +64,7 @@ export async function createTask(formData:FormData,token:string,dueDate:Date):Pr
 } 
 
 
-export async function getUserTask(token:string):Promise<unknown>{
+export async function getUserTask(token:string):Promise<TaskResponse>{
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
@@ -79,7 +95,7 @@ export async function getUserTask(token:string):Promise<unknown>{
 }
 
 
-export async function deleteTask(taskId:string,token:string):Promise<unknown>{
+export async function deleteTask(taskId:string,token:string):Promise<TaskResponse>{
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
@@ -107,7 +123,7 @@ export async function deleteTask(taskId:string,token:string):Promise<unknown>{
 }
 
 
-export async function completeTask(taskId:string,token:string):Promise<unknown>{
+export async function completeTask(taskId:string,token:string):Promise<TaskResponse>{
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
@@ -139,7 +155,7 @@ export async function completeTask(taskId:string,token:string):Promise<unknown>{
 }
 
 
-export async function getTask(taskId:string,token:string):Promise<unknown>{
+export async function getTask(taskId:string,token:string):Promise<TaskResponse>{
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
@@ -167,7 +183,7 @@ export async function getTask(taskId:string,token:string):Promise<unknown>{
 }
 
 
-export async function editTask(taskId:string,token:string,formData:FormData,dueDate:Date):Promise<unknown> {
+export async function editTask(taskId:string,token:string,formData:FormData,dueDate:Date):Promise<TaskResponse> {
     try{
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;

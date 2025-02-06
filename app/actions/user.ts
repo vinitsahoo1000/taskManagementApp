@@ -14,8 +14,21 @@ interface DecodedToken {
     email?: string;
 }
 
+export interface ActionResponse {
+    token?: string;
+    message?: string;
+    error?: string;
+    status?: number;
+}
 
-export async function signup(formData: FormData):Promise<unknown>  {
+interface UserDetailsResponse extends ActionResponse {
+    id?: string;
+    name?: string;
+    email?: string;
+}
+
+
+export async function signup(formData: FormData):Promise<ActionResponse>  {
     try{
         const name = formData.get("name") as string;
         const email = formData.get("email") as string;
@@ -48,12 +61,12 @@ export async function signup(formData: FormData):Promise<unknown>  {
         
         return ({message: "User signup succesful",token})
     }catch(error:unknown){
-        return { error: `Error: ${(error as Error).message}`, status: 500 };
+        return { error: `Error: ${error instanceof Error ? error.message : String(error)}`, status: 500 };
     }
 }
 
 
-export async function login(formData: FormData):Promise<unknown> {
+export async function login(formData: FormData):Promise<ActionResponse> {
     try {
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
@@ -76,12 +89,12 @@ export async function login(formData: FormData):Promise<unknown> {
         
         return ({message: "User login succesful",token})
     } catch (error: unknown) {
-        return { error: `Error: ${(error as Error).message}`, status: 500 };
+        return { error: `Error: ${error instanceof Error ? error.message : String(error)}`, status: 500 };
     }
 }
 
 
-export async function userdetails(token:string):Promise<unknown> {
+export async function userdetails(token:string):Promise<UserDetailsResponse> {
     try{
 
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
@@ -107,6 +120,6 @@ export async function userdetails(token:string):Promise<unknown> {
 
         return { message: "User details fetched successfully", token, ...user };
     }catch(error:unknown){
-        return { error: 'Error: Error fetching user details'};
+        return { error: `Error: ${error instanceof Error ? error.message : String(error)}`, status: 500 };
     }
 }

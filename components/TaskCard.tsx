@@ -1,22 +1,22 @@
-import { FiCheckCircle, FiClock,FiTrash, FiCheck, FiEdit2, FiEdit } from "react-icons/fi";
+import { FiCheckCircle, FiClock,FiTrash, FiCheck, FiEdit } from "react-icons/fi";
 import {format} from "date-fns";
 import { completeTask, deleteTask } from "@/app/actions/task";
 import { toast } from "react-toastify";
 
-export interface TaskProps {
+interface TaskCardProps {
     id: string;
     title: string;
     description: string;
     dueDate: Date;
-    completed: Boolean;
+    completed: boolean;
     createdAt: Date;
     onDeleteSuccess?: (taskId: string) => void;
     onCompleteSuccess?: (taskId: string) => void;
-    onClick: () => void;
+    onClick?: () => void;
 }
 
 
-export const TaskCard = ({ id, title, description, dueDate, completed, createdAt, onDeleteSuccess,onCompleteSuccess,onClick}: TaskProps) => {
+export const TaskCard = ({ id, title, description, dueDate, completed, createdAt, onDeleteSuccess,onCompleteSuccess,onClick}: TaskCardProps) => {
     const formattedCreatedAt = format(new Date(createdAt), "dd MMM, yyyy");
     const formattedDueDate = format(new Date(dueDate), "dd MMM, yyyy");
 
@@ -33,7 +33,8 @@ export const TaskCard = ({ id, title, description, dueDate, completed, createdAt
                 }
             }
         }catch(error){
-            alert("An error occurred while deleting the task.");
+            console.error("Error deleting task:", error);
+            toast.error("An error occurred while deleting the task.");
         }
     }
 
@@ -50,6 +51,7 @@ export const TaskCard = ({ id, title, description, dueDate, completed, createdAt
                 }
             }
         }catch(error){
+            console.error("Error completing task:", error); // Log the error
             toast.error("An error occurred while completing the task.");
         }
     }

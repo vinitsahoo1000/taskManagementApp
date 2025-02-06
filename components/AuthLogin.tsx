@@ -43,7 +43,7 @@ export const AuthLogin = () =>{
                         <Button label={"Login"}/>
                         </form>
                         <p className="text-sm text-gray-600 text-center mt-4">
-                        Don't have an account?{" "}
+                        {"Don't"} have an account?{" "}
                         <a href="/signup" className="text-blue-500 hover:underline">
                             Signup
                         </a>

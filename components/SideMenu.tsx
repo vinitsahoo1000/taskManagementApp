@@ -1,7 +1,7 @@
 "use client";
 import { userdetails } from "@/app/actions/user";
 import { useEffect, useState } from "react";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiX } from "react-icons/fi";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -39,6 +39,14 @@ export const SideMenu = ({ toggleMenu }: { toggleMenu?: () => void }) => {
             className="fixed top-0 left-0 z-50 w-64 h-screen bg-white border-r border-gray-200 sm:translate-x-0 flex flex-col justify-between shadow-lg"
             aria-label="Sidebar"
         >
+            {toggleMenu && (
+                <button
+                    onClick={toggleMenu}
+                    className="absolute top-4 right-4 z-50 bg-white p-2 rounded-full shadow-md hover:bg-gray-200"
+                >
+                    <FiX className="text-gray-800 text-2xl" />
+                </button>
+            )}
             <div className="flex p-5 bg-white border-b border-gray-200">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-7 pr-1">
                     <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
@@ -66,6 +74,7 @@ export const SideMenu = ({ toggleMenu }: { toggleMenu?: () => void }) => {
                         alt={`${user ? user.name : "Guest"}'s avatar`}
                         width={26}
                         height={26}
+                        priority
                     />
                     <span className="ms-3">{user ? user.name : "Guest"}</span>
                 </div>
