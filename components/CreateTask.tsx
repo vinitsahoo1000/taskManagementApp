@@ -4,7 +4,6 @@ import { DescriptionBox } from "./common/DescriptionBox";
 import { InputBox } from "./common/InputBox";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { cookies } from "next/headers";
 
 interface CreateTaskProps{
     closeWindow : ()=> void;
