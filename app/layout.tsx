@@ -16,11 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TaskNote",
-  description: "Task Note App",
-  icons:{
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico"
-  }
+  description: "Task Note App"
 };
 
 export default function RootLayout({
