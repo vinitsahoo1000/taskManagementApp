@@ -1,14 +1,13 @@
 "use client"
-import { createTask } from "@/app/actions/task";
+import { createTask, Task } from "@/app/actions/task";
 import { DescriptionBox } from "./common/DescriptionBox";
 import { InputBox } from "./common/InputBox";
 import { useState } from "react";
-import { TaskProps } from "./TaskCard";
 import { toast } from "react-toastify";
 
 interface CreateTaskProps{
     closeWindow : ()=> void;
-    addTask: (newTask: TaskProps) => void;
+    addTask: (newTask: Task) => void;
 }
 
 
@@ -40,7 +39,7 @@ export const CreateTask = ({closeWindow,addTask}:CreateTaskProps) => {
             } else {
                 toast.success(response.message);
                 if (response.task) {
-                    addTask({ ...response.task, onClick: () => {} });
+                    addTask({ ...response.task});
                 } else {
                     toast.info("Task creation failed.");
                 }
