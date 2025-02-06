@@ -3,6 +3,7 @@
 import prisma from "@/db"
 import jwt from "jsonwebtoken";
 import { ActionResponse } from "./user";
+import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -29,10 +30,18 @@ interface TaskResponse extends ActionResponse {
     tasks?: Task[];
 }
 
-export async function createTask(formData:FormData,token:string,dueDate:Date):Promise<TaskResponse>{
+export async function createTask(formData:FormData,dueDate:Date):Promise<TaskResponse>{
     try{
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;
+
+        const token = (await cookies()).get("token")?.value;
+
+        if(!token){
+            window.location.href = "/login"
+            return({success:false,message:"User not logged in"})
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
@@ -65,8 +74,15 @@ export async function createTask(formData:FormData,token:string,dueDate:Date):Pr
 } 
 
 
-export async function getUserTask(token:string):Promise<TaskResponse>{
+export async function getUserTask():Promise<TaskResponse>{
     try{
+        const token = (await cookies()).get("token")?.value;
+
+        if(!token){
+            window.location.href = "/login"
+            return({success:false,message:"User not logged in"})
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
@@ -96,8 +112,15 @@ export async function getUserTask(token:string):Promise<TaskResponse>{
 }
 
 
-export async function deleteTask(taskId:string,token:string):Promise<TaskResponse>{
+export async function deleteTask(taskId:string):Promise<TaskResponse>{
     try{
+        const token = (await cookies()).get("token")?.value;
+
+        if(!token){
+            window.location.href = "/login"
+            return({success:false,message:"User not logged in"})
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
@@ -124,8 +147,15 @@ export async function deleteTask(taskId:string,token:string):Promise<TaskRespons
 }
 
 
-export async function completeTask(taskId:string,token:string):Promise<TaskResponse>{
+export async function completeTask(taskId:string):Promise<TaskResponse>{
     try{
+        const token = (await cookies()).get("token")?.value;
+
+        if(!token){
+            window.location.href = "/login"
+            return({success:false,message:"User not logged in"})
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
@@ -156,8 +186,15 @@ export async function completeTask(taskId:string,token:string):Promise<TaskRespo
 }
 
 
-export async function getTask(taskId:string,token:string):Promise<TaskResponse>{
+export async function getTask(taskId:string):Promise<TaskResponse>{
     try{
+        const token = (await cookies()).get("token")?.value;
+
+        if(!token){
+            window.location.href = "/login"
+            return({success:false,message:"User not logged in"})
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {
@@ -184,10 +221,18 @@ export async function getTask(taskId:string,token:string):Promise<TaskResponse>{
 }
 
 
-export async function editTask(taskId:string,token:string,formData:FormData,dueDate:Date):Promise<TaskResponse> {
+export async function editTask(taskId:string,formData:FormData,dueDate:Date):Promise<TaskResponse> {
     try{
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;
+
+        const token = (await cookies()).get("token")?.value;
+
+        if(!token){
+            window.location.href = "/login"
+            return({success:false,message:"User not logged in"})
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
         
         if (!decoded?.userId) {

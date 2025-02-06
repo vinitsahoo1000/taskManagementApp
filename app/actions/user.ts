@@ -111,8 +111,14 @@ export async function login(formData: FormData):Promise<ActionResponse> {
 }
 
 
-export async function userdetails(token:string):Promise<UserDetailsResponse> {
+export async function userdetails():Promise<UserDetailsResponse> {
     try{
+        const token = (await cookies()).get("token")?.value;
+
+        if(!token){
+            window.location.href = "/login"
+            return({success:false,message:"User not logged in"})
+        }
 
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
 

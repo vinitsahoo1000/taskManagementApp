@@ -34,7 +34,7 @@ export const TaskCard = ({ id, title, description, dueDate, completed, createdAt
 
         setIsDeleting(true);
         try {
-            const response = await deleteTask(id, token);
+            const response = await deleteTask(id);
             if (response) {
                 toast.info("Task deleted");
                 if (onDeleteSuccess) {
@@ -60,7 +60,7 @@ export const TaskCard = ({ id, title, description, dueDate, completed, createdAt
 
         setIsCompleting(true);
         try {
-            const response = await completeTask(id, token);
+            const response = await completeTask(id);
             if (response) {
                 toast.success("Task completed");
                 if (onCompleteSuccess) {

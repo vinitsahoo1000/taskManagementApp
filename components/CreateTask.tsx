@@ -4,6 +4,7 @@ import { DescriptionBox } from "./common/DescriptionBox";
 import { InputBox } from "./common/InputBox";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { cookies } from "next/headers";
 
 interface CreateTaskProps{
     closeWindow : ()=> void;
@@ -25,22 +26,14 @@ export const CreateTask = ({closeWindow,addTask}:CreateTaskProps) => {
             toast.error("Please fill in all required fields");
             return;
         }
-    
         setLoading(true);
-        const token = localStorage.getItem("token");
-        
-        if (!token) {
-            toast.error("No token found. Please log in.");
-            setLoading(false);
-            return;
-        }
     
         const data = new FormData();
         data.append("title", formData.title);
         data.append("description", formData.description);
     
         try {
-            const response = await createTask(data, token, dueDate);
+            const response = await createTask(data, dueDate);
     
             if (response.error) {
                 toast.error(response.error);

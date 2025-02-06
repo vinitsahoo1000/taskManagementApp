@@ -11,10 +11,7 @@ export const SideMenu = ({ toggleMenu }: { toggleMenu?: () => void }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const token = localStorage.getItem("token");
-                if (!token) return;
-
-                const userData = await userdetails(token);
+                const userData = await userdetails();
 
                 if (userData && "name" in userData) {
                     setUser(userData as { name: string });

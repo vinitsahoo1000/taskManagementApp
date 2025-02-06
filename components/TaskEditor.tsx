@@ -24,10 +24,8 @@ export const TaskEditor = ({ task, closeWindow, updateTaskInUI }: TaskEditorProp
 
     const getsingleTask = useCallback(async () => {
         try {
-            const token = localStorage.getItem("token");
-            if (!token) return;
             
-            const response = await getTask(task.id, token);
+            const response = await getTask(task.id);
             if (response.task) {
                 setFormData({
                     title: response.task?.title,
@@ -45,9 +43,6 @@ export const TaskEditor = ({ task, closeWindow, updateTaskInUI }: TaskEditorProp
 
     const updateTask = async () => {
         try {
-            const token = localStorage.getItem("token");
-            if (!token) return;
-
             const formDataToSend = new FormData();
             formDataToSend.append("title", formData.title);
             formDataToSend.append("description", formData.description);
@@ -57,7 +52,7 @@ export const TaskEditor = ({ task, closeWindow, updateTaskInUI }: TaskEditorProp
                 return;
             }
 
-            const response = await editTask(task.id, token, formDataToSend, dueDate);
+            const response = await editTask(task.id, formDataToSend, dueDate);
 
             if (response) {
                 const updatedTask: Task = {

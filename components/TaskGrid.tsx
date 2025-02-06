@@ -12,13 +12,8 @@ export const TaskGrid = () => {
 
     const fetchTasks = useCallback(async () => {
         try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                setIsLoading(false);
-                return;
-            }
 
-            const { tasks: fetchedTasks, error } = await getUserTask(token);
+            const { tasks: fetchedTasks, error } = await getUserTask();
 
             if (error) {
                 console.error("Error fetching tasks:", error);
