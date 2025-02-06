@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -8,15 +8,18 @@ if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined in environment variables!");
 }
 
-export function middleware(request: NextRequest) {
+const secret = new TextEncoder().encode(JWT_SECRET);
+
+export async function middleware(request: NextRequest) {
+
     const token = request.cookies.get("token")?.value;  
-    
+
     if(!token){
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
       try {
-        jwt.verify(token, JWT_SECRET);
+        await jwtVerify(token, secret);
         return NextResponse.next(); 
       } catch (error) {
         console.error("JWT Verification Failed:", error);
@@ -25,5 +28,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/"], 
+  matcher: ["/((?!login).*)"], 
 };
