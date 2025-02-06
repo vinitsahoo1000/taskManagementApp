@@ -14,16 +14,24 @@ interface CreateTaskProps{
 export const CreateTask = ({closeWindow,addTask}:CreateTaskProps) => {
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [formData, setFormData] = useState({ title: "", description: ""});
+    const [loading,setLoading] = useState(false);
 
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDueDate(new Date(e.target.value));
     };
 
     const handleAddTask = async () => {
-        const token = localStorage.getItem("token");
+        if (!formData.title || !formData.description || !dueDate) {
+            toast.error("Please fill in all required fields");
+            return;
+        }
     
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        
         if (!token) {
             toast.error("No token found. Please log in.");
+            setLoading(false);
             return;
         }
     
@@ -32,22 +40,25 @@ export const CreateTask = ({closeWindow,addTask}:CreateTaskProps) => {
         data.append("description", formData.description);
     
         try {
-            const response = await createTask(data, token,dueDate!);
+            const response = await createTask(data, token, dueDate);
     
             if (response.error) {
                 toast.error(response.error);
-            } else {
+                return;
+            }
+    
+            if (response.task) {
                 toast.success(response.message);
-                if (response.task) {
-                    addTask({ ...response.task});
-                } else {
-                    toast.info("Task creation failed.");
-                }
-                closeWindow(); 
+                addTask({ ...response.task });
+                closeWindow();
+            } else {
+                toast.info("Task creation failed.");
             }
         } catch (error) {
             console.error("Error creating task:", error);
             toast.error("An error occurred while adding the task.");
+        } finally {
+            setLoading(false);
         }
     };
     
@@ -81,9 +92,12 @@ export const CreateTask = ({closeWindow,addTask}:CreateTaskProps) => {
                 <div className="flex justify-center">
                     <button
                         onClick={handleAddTask}
-                        className="w-full py-2 px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition duration-300"
+                        className={`w-full py-2 px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition duration-300 ${loading 
+                            ? 'bg-blue-400 cursor-not-allowed' 
+                            : 'bg-blue-600 hover:bg-blue-700'
+                        }`}
                     >
-                        Create Task
+                        {loading ? 'Creating...' : 'Create Task'}
                     </button>
                 </div>
             </div>

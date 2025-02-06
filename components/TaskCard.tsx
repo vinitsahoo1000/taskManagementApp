@@ -2,6 +2,7 @@ import { FiCheckCircle, FiClock,FiTrash, FiCheck, FiEdit } from "react-icons/fi"
 import {format} from "date-fns";
 import { completeTask, deleteTask } from "@/app/actions/task";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 interface TaskCardProps {
     id: string;
@@ -17,42 +18,60 @@ interface TaskCardProps {
 
 
 export const TaskCard = ({ id, title, description, dueDate, completed, createdAt, onDeleteSuccess,onCompleteSuccess,onClick}: TaskCardProps) => {
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isCompleting, setIsCompleting] = useState(false);
     const formattedCreatedAt = format(new Date(createdAt), "dd MMM, yyyy");
     const formattedDueDate = format(new Date(dueDate), "dd MMM, yyyy");
 
-    const onDelete = async()=>{
+    const onDelete = async () => {
+        if (isDeleting) return;
+        
         const token = localStorage.getItem("token");
+        if (!token) {
+            toast.error("No token found. Please log in.");
+            return;
+        }
 
-        if(!token) return;
-        try{
-            const response = await deleteTask(id,token)
-            if(response){
-                toast.info("Task deleted")
+        setIsDeleting(true);
+        try {
+            const response = await deleteTask(id, token);
+            if (response) {
+                toast.info("Task deleted");
                 if (onDeleteSuccess) {
-                    onDeleteSuccess(id); // ✅ Remove task from UI
+                    onDeleteSuccess(id);
                 }
             }
-        }catch(error){
+        } catch (error) {
             console.error("Error deleting task:", error);
             toast.error("An error occurred while deleting the task.");
+        } finally {
+            setIsDeleting(false);
         }
     }
 
-    const onComplete = async()=>{
+    const onComplete = async () => {
+        if (isCompleting) return;
+        
         const token = localStorage.getItem("token");
+        if (!token) {
+            toast.error("No token found. Please log in.");
+            return;
+        }
 
-        if(!token) return;
-        try{
-            const response = await completeTask(id,token);
-            if(response){
-                toast.done("Task completed")
+        setIsCompleting(true);
+        try {
+            const response = await completeTask(id, token);
+            if (response) {
+                toast.success("Task completed");
                 if (onCompleteSuccess) {
-                    onCompleteSuccess(id); // ✅ Remove task from UI
+                    onCompleteSuccess(id);
                 }
             }
-        }catch(error){
-            console.error("Error completing task:", error); // Log the error
+        } catch (error) {
+            console.error("Error completing task:", error);
             toast.error("An error occurred while completing the task.");
+        } finally {
+            setIsCompleting(false);
         }
     }
 
@@ -89,20 +108,32 @@ export const TaskCard = ({ id, title, description, dueDate, completed, createdAt
             </div>
             <div className="mt-6 flex justify-between">
             <button
-                onClick={onDelete}
-                className="flex items-center gap-1 text-xs bg-red-500 text-white px-3 py-1 rounded-md shadow hover:bg-red-600 transition-all duration-300"
-            >
-                <FiTrash className="w-4 h-4" /> Delete
-            </button>
-
-            {!completed && (
-                <button
-                    onClick={onComplete}
-                    className="flex items-center gap-1 text-xs bg-green-500 text-white px-3 py-1 rounded-md shadow hover:bg-green-600 transition-all duration-300"
+                    onClick={onDelete}
+                    disabled={isDeleting}
+                    className={`flex items-center gap-1 text-xs px-3 py-1 rounded-md shadow transition-all duration-300 ${
+                        isDeleting 
+                            ? 'bg-red-400 cursor-not-allowed' 
+                            : 'bg-red-500 hover:bg-red-600'
+                    } text-white`}
                 >
-                    <FiCheck className="w-4 h-4" /> Complete
+                    <FiTrash className="w-4 h-4" />
+                    {isDeleting ? 'Deleting...' : 'Delete'}
                 </button>
-            )}
+
+                {!completed && (
+                    <button
+                        onClick={onComplete}
+                        disabled={isCompleting}
+                        className={`flex items-center gap-1 text-xs px-3 py-1 rounded-md shadow transition-all duration-300 ${
+                            isCompleting 
+                                ? 'bg-green-400 cursor-not-allowed' 
+                                : 'bg-green-500 hover:bg-green-600'
+                        } text-white`}
+                    >
+                        <FiCheck className="w-4 h-4" />
+                        {isCompleting ? 'Completing...' : 'Complete'}
+                    </button>
+                )}
             <button
                 onClick={onClick}
                 className="flex items-center gap-1 text-xs bg-slate-500 text-white px-3 py-1 rounded-md shadow hover:bg-slate-600 transition-all duration-300"
