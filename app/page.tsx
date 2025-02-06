@@ -1,13 +1,10 @@
 "use client"
 import { SideMenu } from "@/components/SideMenu";
 import { TaskGrid } from "@/components/TaskGrid";
-import { Metadata } from "next";
+import Head from "next/head";
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
 
-export const metadata: Metadata = {
-  title: 'Task Note'
-};
 
 
 export default function Home() {
@@ -18,6 +15,10 @@ export default function Home() {
   };
 
   return (
+    <>
+    <Head>
+        <title>TaskNote</title>
+    </Head>
     <div className="flex flex-col md:grid md:grid-cols-5 min-h-screen">
     <div className="hidden md:block md:col-span-1 p-4">
       <SideMenu />
@@ -43,6 +44,6 @@ export default function Home() {
       <TaskGrid />
     </div>
   </div>
-
+  </>
   );
 }
