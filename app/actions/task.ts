@@ -1,5 +1,6 @@
-"use server"
 export const runtime = "nodejs";
+
+"use server"
 import prisma from "@/db"
 import jwt from "jsonwebtoken";
 import { ActionResponse } from "./user";
