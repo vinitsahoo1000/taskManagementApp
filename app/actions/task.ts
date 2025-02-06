@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { ActionResponse } from "./user";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
+export const runtime = "nodejs";
 
 if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined in environment variables!");
