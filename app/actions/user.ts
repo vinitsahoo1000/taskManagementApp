@@ -146,3 +146,15 @@ export async function userdetails():Promise<UserDetailsResponse> {
         return { error: `Error: ${error instanceof Error ? error.message : String(error)}`, status: 500 };
     }
 }
+
+
+export async function logout() {
+    try {
+        (await cookies()).set("token", "", { expires: new Date(0) }); // Remove token cookie
+        
+        return { success: true, message: "User logged out successfully" };
+    } catch (error: unknown) {
+    return{ error: `Error: ${error instanceof Error ? error.message : String(error)}`, status: 500 }
+        
+    }
+}

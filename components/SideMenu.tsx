@@ -1,5 +1,5 @@
 "use client";
-import { userdetails } from "@/app/actions/user";
+import { logout, userdetails } from "@/app/actions/user";
 import { useEffect, useState } from "react";
 import { FiLogOut, FiX } from "react-icons/fi";
 import Image from "next/image";
@@ -25,9 +25,9 @@ export const SideMenu = ({ toggleMenu }: { toggleMenu?: () => void }) => {
         fetchUser();
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        window.location.href = "/login"; // Redirect to login
+    const handleLogout = async() => {
+        await logout(); 
+        window.location.href = "/login";
     };
 
     return (

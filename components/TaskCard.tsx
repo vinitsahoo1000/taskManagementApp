@@ -25,12 +25,6 @@ export const TaskCard = ({ id, title, description, dueDate, completed, createdAt
 
     const onDelete = async () => {
         if (isDeleting) return;
-        
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in.");
-            return;
-        }
 
         setIsDeleting(true);
         try {
@@ -51,12 +45,6 @@ export const TaskCard = ({ id, title, description, dueDate, completed, createdAt
 
     const onComplete = async () => {
         if (isCompleting) return;
-        
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("No token found. Please log in.");
-            return;
-        }
 
         setIsCompleting(true);
         try {

@@ -11,22 +11,26 @@ if (!JWT_SECRET) {
 const secret = new TextEncoder().encode(JWT_SECRET);
 
 export async function middleware(request: NextRequest) {
+    const token = request.cookies.get("token")?.value;
+    const { pathname } = request.nextUrl;
 
-    const token = request.cookies.get("token")?.value;  
-
-    if(!token){
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (token && (pathname === "/login" || pathname === "/signup")) {
+        return NextResponse.redirect(new URL("/", request.url));
     }
 
-      try {
-        await jwtVerify(token, secret);
-        return NextResponse.next(); 
-      } catch (error) {
+    if (!token && pathname !== "/login" && pathname !== "/signup") {
+        return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    try {
+        if (token) await jwtVerify(token, secret);
+        return NextResponse.next();
+    } catch (error) {
         console.error("JWT Verification Failed:", error);
         return NextResponse.redirect(new URL("/login", request.url));
     }
 }
 
 export const config = {
-  matcher: ["/((?!login).*)"], 
+    matcher: ["/", "/login", "/signup"],
 };
