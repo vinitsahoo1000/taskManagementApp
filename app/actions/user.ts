@@ -60,12 +60,12 @@ export async function signup(formData: FormData):Promise<ActionResponse>  {
                 password: hashedPassword
             }
         })
-        const token = jwt.sign({ userId: newUser.id, email: newUser.email }, JWT_SECRET);
+        const token = jwt.sign({ userId: newUser.id, email: newUser.email }, JWT_SECRET ,{ expiresIn: "7d" });
         
         (await cookies()).set("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", 
-            sameSite: "strict", 
+            sameSite: "lax", 
             path: "/",
         });
 
@@ -95,12 +95,12 @@ export async function login(formData: FormData):Promise<ActionResponse> {
             return { error: "Invalid credentials!", status: 401 };
         }
 
-        const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET);
+        const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET ,{ expiresIn: "7d" });
         
         (await cookies()).set("token", token, {
             httpOnly: true, 
             secure: process.env.NODE_ENV === "production", 
-            sameSite: "strict", 
+            sameSite: "lax", 
             path: "/",
         });
 
